@@ -1,0 +1,66 @@
+# Stellt sicher, dass Ordner wie /leistungen/eventvideo-aftermovies/
+# automatisch die index.html ausliefern (Standard-Verhalten, hier nur
+# explizit abgesichert) und verhindert die Anzeige von Verzeichnislisten.
+
+DirectoryIndex index.html
+
+Options -Indexes
+
+
+# --- Saubere URLs: /ordner/index.html -> /ordner/ (301) ---
+RewriteEngine On
+
+# --- Einheitlicher Host: xatmotion.de -> www.xatmotion.de (301) ---
+RewriteCond %{HTTP_HOST} ^xatmotion\.de$ [NC]
+RewriteRule ^ https://www.xatmotion.de%{REQUEST_URI} [R=301,L]
+RewriteCond %{THE_REQUEST} \s/+(.*?/)?index\.html[\s?#] [NC]
+RewriteRule ^ /%1 [R=301,L]
+
+# --- Alte Joomla-Adressen auf die neuen Seiten umleiten ---
+Redirect 301 /component/sppagebuilder/page/33 /datenschutz/
+Redirect 301 /project/blog-list/33-sportgala-des-landkreises-gotha-2026-mehrkamera-produktion-in-ohrdruf /projekte/33-sportgala-gotha-2026/
+Redirect 301 /project/blog-list/hochzeitszauber-im-berghotel-eisenach-unser-imagefilm-projekt /projekte/hochzeitszauber-berghotel-eisenach/
+Redirect 301 /project/blog-list/kreisseniorentag-2025-in-ohrdruf-x-motion-medienproduktion-erneut-als-medienpartner-dabei /projekte/kreisseniorentag-2025/
+Redirect 301 /project/blog-list/kuerbisse-gluehen-2025-social-media-reihe-und-aftermovie-von-x-motion /projekte/kuerbisse-gluehen-2025/
+Redirect 301 /project/blog-list/netzwerkveranstaltung-der-stadtwerke-gotha-x-motion-medienproduktion-liefert-bilder-schnitt /projekte/netzwerkveranstaltung-stadtwerke-gotha/
+Redirect 301 /component/content/article/wenn-der-applaus-verhallt-und-der-film-bleibt /blog/wenn-der-applaus-verhallt-und-der-film-bleibt/
+Redirect 301 /component/content/article/warum-set-design-mehr-ist-als-ordnung-im-hintergrund-und-wie-kleine-details-vertrauen-schaffen /blog/set-design-vertrauen-kleine-details/
+
+
+# --- HTTPS erzwingen ---
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+
+# --- Sicherheits-Header ---
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=()"
+  Header always set Strict-Transport-Security "max-age=31536000"
+  Header always set Content-Security-Policy "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; media-src 'self'; frame-src https://www.youtube-nocookie.com; connect-src 'self'; form-action 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'self'"
+</IfModule>
+
+# --- Browser-Cache (Brotli/Gzip liefert der Server bereits automatisch) ---
+# Bilder, Videos, Icons: 30 Tage. Schriften: 1 Jahr. CSS/JS: 1 Stunde.
+# HTML: immer beim Server nachfragen (ETag), damit Änderungen sofort sichtbar sind.
+<IfModule mod_headers.c>
+  <FilesMatch "\.(jpe?g|png|gif|webp|avif|svg|ico|mp4|webm)$">
+    Header set Cache-Control "public, max-age=2592000"
+  </FilesMatch>
+  <FilesMatch "\.(woff2?|ttf|otf)$">
+    Header set Cache-Control "public, max-age=31536000, immutable"
+  </FilesMatch>
+  <FilesMatch "\.(css|js)$">
+    Header set Cache-Control "public, max-age=3600, must-revalidate"
+  </FilesMatch>
+  <FilesMatch "\.html$">
+    Header set Cache-Control "no-cache"
+  </FilesMatch>
+</IfModule>
+
+# --- Versteckte Dateien und Sicherungskopien nicht ausliefern ---
+<FilesMatch "(^\.|\.(bak|orig|old|sql|log|sh|md)$|^body_new\.html$|^htaccess-umbenennen)">
+  Require all denied
+</FilesMatch>

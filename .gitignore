@@ -1,0 +1,38 @@
+# macOS / Editor
+.DS_Store
+**/.DS_Store
+.com.google.Chrome.*
+*.swp
+
+# Sicherungen und Entwürfe, nie veröffentlichen
+*.bak
+*.orig
+*.old
+*.sql
+*.log
+*.sh.bak
+body_new.html
+
+# Lokale Zugangsdaten für das Deploy-Skript (enthält Serverdaten)
+scripts/deploy.conf
+
+# Sichtbare .htaccess-Kopie wird nicht mehr gebraucht (das Skript lädt die echte .htaccess hoch)
+htaccess-umbenennen-zu-.htaccess.txt
+
+# Ungenutzte Original-Videos (Seite lädt nur die *-web.mp4)
+assets/videos/hero-background.mp4
+leistungen/eventvideo-aftermovies/assets/videos/event-hero.mp4
+leistungen/luftaufnahmen/assets/videos/luftaufnahmen-hero.mp4
+social-media-pakete/assets/videos/social-pakete-hero.mp4
+
+# Ungenutzte große Bilder (Handbuch Abschnitt 2, "Nicht hochladen")
+leistungen/eventvideo-aftermovies/assets/images/eventmovie-was-ist-das.png
+leistungen/luftaufnahmen/assets/images/luftbilder-head.png
+social-media-pakete/assets/images/hero-still.jpg
+projekte/*/assets/images/hero.png
+projekte/kuerbisse-gluehen-2025/assets/images/og.jpg
+projekte/netzwerkveranstaltung-stadtwerke-gotha/assets/images/og.jpg
+assets/images/projects/kuerbisse-gluehen-2025.png
+assets/images/service-bg-3.png
+agb/agb-banner.png
+datenschutz/agb-banner.png
