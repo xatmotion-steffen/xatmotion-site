@@ -10,6 +10,20 @@ CONF="scripts/deploy.conf"
 # shellcheck disable=SC1090
 source "$CONF"
 MODE="${MODE:-rsync}"
+
+RSYNC=""
+if [ "$MODE" = "rsync" ]; then
+  for c in /opt/homebrew/bin/rsync /usr/local/bin/rsync "$(command -v rsync || true)"; do
+    [ -n "$c" ] && [ -x "$c" ] || continue
+    v="$("$c" --version 2>/dev/null | head -n 1 || true)"
+    case "$v" in *"version 3."*) RSYNC="$c"; break ;; esac
+  done
+  if [ -z "$RSYNC" ]; then
+    echo "Kein rsync 3.x gefunden. Das macOS-rsync (openrsync) reicht nicht."
+    echo "Installieren:  brew install rsync   (danach Terminal neu starten)"
+    exit 1
+  fi
+fi
 SITE_URL="${SITE_URL:-https://www.xatmotion.de}"
 
 # 1) Nur deployen, was committet ist
@@ -53,9 +67,12 @@ echo
 if [ "$MODE" = "rsync" ]; then
   # --checksum: Zeitstempel sind nach git archive immer neu, deshalb nach Inhalt vergleichen.
   # Kein --delete: Dateien auf dem Server werden nie gelöscht (Löschen bewusst von Hand).
-  COMMON=(-rlt --checksum --chmod=D755,F644 --itemize-changes)
+  COMMON=(-rlt --checksum --itemize-changes)
   echo "== Trockenlauf: diese Dateien würden hochgeladen =="
-  OUT="$(rsync "${COMMON[@]}" --dry-run ${RSH[@]+"${RSH[@]}"} "$STAGE"/ "$DEST" | grep -E '^[<>c][fd]' || true)"
+  if ! RAW="$("$RSYNC" "${COMMON[@]}" --dry-run ${RSH[@]+"${RSH[@]}"} "$STAGE"/ "$DEST" 2>&1)"; then
+    echo "FEHLER im Trockenlauf (rsync):"; echo "$RAW"; echo "Es wurde nichts hochgeladen."; exit 1
+  fi
+  OUT="$(echo "$RAW" | grep -E '^[<>c.][fdL]' || true)"
   if [ -z "$OUT" ]; then echo "Keine Änderungen, Server ist auf dem Stand $COMMIT."; exit 0; fi
   echo "$OUT"
   echo; echo "Anzahl: $(echo "$OUT" | grep -c '^>f') Dateien"
@@ -64,7 +81,7 @@ if [ "$MODE" = "rsync" ]; then
   read -r -p "Wirklich hochladen? (ja/nein) " ok
   [ "$ok" = "ja" ] || { echo "Abgebrochen."; exit 1; }
   # shellcheck disable=SC2086
-  rsync "${COMMON[@]}" $BACKUP_ARG ${RSH[@]+"${RSH[@]}"} "$STAGE"/ "$DEST"
+  "$RSYNC" "${COMMON[@]}" $BACKUP_ARG ${RSH[@]+"${RSH[@]}"} "$STAGE"/ "$DEST"
   echo "Überschriebene Dateien liegen auf dem Server unter: _deploy-backup/$TS (neben dem Webordner)"
 elif [ "$MODE" = "lftp" ]; then
   command -v lftp >/dev/null || { echo "lftp fehlt (brew install lftp)."; exit 1; }
