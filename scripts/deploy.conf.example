@@ -1,9 +1,11 @@
-# Kopie davon als scripts/deploy.conf speichern und ausfüllen. deploy.conf kommt NICHT ins Git.
-# MODE: rsync (SSH-Zugang bei All-Inkl nötig) oder lftp (SFTP/FTPS)
+# Kopie davon als scripts/deploy.conf speichern. deploy.conf kommt NICHT ins Git.
+# MODE: rsync (SSH) oder lftp (SFTP)
 MODE=rsync
-REMOTE_HOST=wXXXXXXX.kasserver.com        # Server aus dem KAS
-REMOTE_USER=sXXXXXXX                      # eigener Zugang, nur für den Webordner
-REMOTE_DIR=/www/htdocs/wXXXXXXX/xatmotion.de/   # Zielordner (mit Schrägstrich am Ende)
+REMOTE_HOST=w0183590.kasserver.com
+REMOTE_USER=ssh-w0183590                        # SSH-Login des Hauptaccounts (KAS: Tools -> SSH-Zugang)
+REMOTE_DIR=/www/htdocs/w0183590/notfall.xatmotion/   # Ziel von xatmotion.de laut KAS (Mit Schrägstrich am Ende)
 SITE_URL=https://www.xatmotion.de
-# Optional: Zielordner lokal für Tests (überschreibt Host/User/Dir, lädt nichts hoch)
+# Optional: eigener SSH-Schlüssel (empfohlen, mit Passphrase). Ohne Zeile fragt ssh nach dem Passwort.
+# SSH_KEY=$HOME/.ssh/id_ed25519_allinkl
+# Optional: Zielordner lokal für Tests (lädt nichts hoch)
 # LOCAL_TARGET=/tmp/xatmotion-testziel/

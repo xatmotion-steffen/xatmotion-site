@@ -38,12 +38,12 @@ rm -rf "$STAGE/scripts" "$STAGE/HANDBUCH.md" "$STAGE/README.md" "$STAGE/.gitigno
 TS="$(date +%Y%m%d-%H%M%S)"
 if [ -n "${LOCAL_TARGET:-}" ]; then
   DEST="$LOCAL_TARGET"; mkdir -p "$DEST"
-  RSH=""; BACKUP_ARG="--backup --backup-dir=$(dirname "${DEST%/}")/_deploy-backup/$TS"
+  RSH=(); BACKUP_ARG="--backup --backup-dir=$(dirname "${DEST%/}")/_deploy-backup/$TS"
   echo "TESTMODUS: Ziel ist lokal ($DEST), es wird nichts auf den Server geladen."
 else
   : "${REMOTE_HOST:?}" "${REMOTE_USER:?}" "${REMOTE_DIR:?}"
   DEST="$REMOTE_USER@$REMOTE_HOST:$REMOTE_DIR"
-  RSH="-e ssh"
+  RSH=(-e "ssh${SSH_KEY:+ -i $SSH_KEY -o IdentitiesOnly=yes}")
   BACKUP_ARG="--backup --backup-dir=../_deploy-backup/$TS"
 fi
 
@@ -55,7 +55,7 @@ if [ "$MODE" = "rsync" ]; then
   # Kein --delete: Dateien auf dem Server werden nie gelöscht (Löschen bewusst von Hand).
   COMMON=(-rlt --checksum --chmod=D755,F644 --itemize-changes)
   echo "== Trockenlauf: diese Dateien würden hochgeladen =="
-  OUT="$(rsync "${COMMON[@]}" --dry-run ${RSH:+$RSH} "$STAGE"/ "$DEST" | grep -E '^[<>c][fd]' || true)"
+  OUT="$(rsync "${COMMON[@]}" --dry-run ${RSH[@]+"${RSH[@]}"} "$STAGE"/ "$DEST" | grep -E '^[<>c][fd]' || true)"
   if [ -z "$OUT" ]; then echo "Keine Änderungen, Server ist auf dem Stand $COMMIT."; exit 0; fi
   echo "$OUT"
   echo; echo "Anzahl: $(echo "$OUT" | grep -c '^>f') Dateien"
@@ -64,7 +64,7 @@ if [ "$MODE" = "rsync" ]; then
   read -r -p "Wirklich hochladen? (ja/nein) " ok
   [ "$ok" = "ja" ] || { echo "Abgebrochen."; exit 1; }
   # shellcheck disable=SC2086
-  rsync "${COMMON[@]}" $BACKUP_ARG ${RSH:+$RSH} "$STAGE"/ "$DEST"
+  rsync "${COMMON[@]}" $BACKUP_ARG ${RSH[@]+"${RSH[@]}"} "$STAGE"/ "$DEST"
   echo "Überschriebene Dateien liegen auf dem Server unter: _deploy-backup/$TS (neben dem Webordner)"
 elif [ "$MODE" = "lftp" ]; then
   command -v lftp >/dev/null || { echo "lftp fehlt (brew install lftp)."; exit 1; }
