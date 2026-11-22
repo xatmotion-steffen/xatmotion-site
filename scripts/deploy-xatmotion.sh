@@ -67,7 +67,7 @@ echo
 if [ "$MODE" = "rsync" ]; then
   # --checksum: Zeitstempel sind nach git archive immer neu, deshalb nach Inhalt vergleichen.
   # Kein --delete: Dateien auf dem Server werden nie gelöscht (Löschen bewusst von Hand).
-  COMMON=(-rlt --checksum --itemize-changes)
+  COMMON=(-rl --checksum --itemize-changes)
   echo "== Trockenlauf: diese Dateien würden hochgeladen =="
   if ! RAW="$("$RSYNC" "${COMMON[@]}" --dry-run ${RSH[@]+"${RSH[@]}"} "$STAGE"/ "$DEST" 2>&1)"; then
     echo "FEHLER im Trockenlauf (rsync):"; echo "$RAW"; echo "Es wurde nichts hochgeladen."; exit 1
