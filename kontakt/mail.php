@@ -15,7 +15,7 @@
  */
 
 $empfaenger = 'formulare@xatmotion.de';
-$absender   = 'webseite@xatmotion.de'; // Absender der internen Benachrichtigung
+$absender   = 'info@xatmotion.de'; // Absender der internen Benachrichtigung (muss ein existierendes Postfach/Alias sein, sonst verwirft All-Inkl die Mail)
 $antwortAdresse = 'info@xatmotion.de'; // Absender der Bestätigungsmail an den Anfragenden
 
 // Weihnachtspause (in js/pause.js ebenfalls pflegen): Hinweis in der Bestätigung 14 Tage vorher bis Ende
