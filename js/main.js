@@ -166,4 +166,37 @@ document.addEventListener('DOMContentLoaded', function () {
       if (t) t.scrollBy({ left: parseInt(btn.getAttribute('data-scroll-by'), 10) || 0, behavior: 'smooth' });
     });
   });
+  // Teilen-Buttons: Link kopieren und Teilen-Menü des Geräts (rein lokal, keine Anfragen an Dritte)
+  document.querySelectorAll('[data-share-copy]').forEach(function (btn) {
+    var label = btn.querySelector('span');
+    var icon = btn.querySelector('i');
+    btn.addEventListener('click', function () {
+      var url = btn.getAttribute('data-url') || window.location.href;
+      function done() {
+        if (label) label.textContent = 'Link kopiert';
+        if (icon) icon.className = 'fa-solid fa-check';
+        setTimeout(function () {
+          if (label) label.textContent = 'Link kopieren';
+          if (icon) icon.className = 'fa-solid fa-link';
+        }, 2000);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(done, function () {});
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = url; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { if (document.execCommand('copy')) done(); } catch (e) {}
+        document.body.removeChild(ta);
+      }
+    });
+  });
+  if (navigator.share) {
+    document.querySelectorAll('[data-share-native]').forEach(function (btn) {
+      btn.hidden = false;
+      btn.addEventListener('click', function () {
+        navigator.share({ title: btn.getAttribute('data-title') || document.title, url: btn.getAttribute('data-url') || window.location.href }).catch(function () {});
+      });
+    });
+  }
 });

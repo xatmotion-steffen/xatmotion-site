@@ -25,6 +25,22 @@ Redirect 301 /project/blog-list/kuerbisse-gluehen-2025-social-media-reihe-und-af
 Redirect 301 /project/blog-list/netzwerkveranstaltung-der-stadtwerke-gotha-x-motion-medienproduktion-liefert-bilder-schnitt /projekte/netzwerkveranstaltung-stadtwerke-gotha/
 Redirect 301 /component/content/article/wenn-der-applaus-verhallt-und-der-film-bleibt /blog/wenn-der-applaus-verhallt-und-der-film-bleibt/
 Redirect 301 /component/content/article/warum-set-design-mehr-ist-als-ordnung-im-hintergrund-und-wie-kleine-details-vertrauen-schaffen /blog/set-design-vertrauen-kleine-details/
+# Joomla-Startseite und Listenseiten (exakte Treffer)
+RedirectMatch 301 ^/index\.php$ /
+RedirectMatch 301 ^/home/?$ /
+RedirectMatch 301 ^/project/blog-list/?$ /blog/
+RedirectMatch 301 ^/social-media-paketuebersicht/?$ /social-media-pakete/
+
+# Alte Joomla-Bereiche ohne Nachfolger: 410 (dauerhaft entfernt). Die einzelnen
+# Weiterleitungen oben stehen vor diesen Regeln und haben Vorrang.
+RedirectMatch gone ^/component/
+RedirectMatch gone ^/project/blog-list/.+
+RedirectMatch gone ^/beratung/
+RedirectMatch gone ^/adventkalender
+
+# Eigene Fehlerseite (Statuscode bleibt 404 bzw. 410)
+ErrorDocument 404 /404/index.html
+ErrorDocument 410 /404/index.html
 
 
 # --- HTTPS erzwingen ---
