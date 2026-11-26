@@ -1426,3 +1426,9 @@ button{font-family:inherit;cursor:pointer;}
 .err-links{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;}
 .err-links .project-video-link{margin:0;}
 .err-card .btn,.err-card .project-video-link{text-decoration:none;}
+
+/* Hero-Titel auf schmalen Handys (Luftaufnahmen lief seitlich ueber) */
+@media (max-width:480px){.page-hero-title{font-size:30px;letter-spacing:.5px;}}
+
+/* Lange Woerter in Textkarten (z. B. Verbraucherstreitbeilegung) duerfen umbrechen */
+.legal-card h2,.legal-card h3,.legal-card p,.legal-card li{overflow-wrap:break-word;}
