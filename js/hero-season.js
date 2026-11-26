@@ -48,8 +48,16 @@
   hero.classList.add(s.cls);
   if (s.bright) hero.classList.add('is-bright');
 
-  var g = document.getElementById('heroGreeting');
-  if (g && greeting) { g.textContent = greeting; g.hidden = false; }
+  /* Das Skript steht im Header, der Gruss-Absatz kommt erst weiter unten im Dokument. */
+  function showGreeting() {
+    var g = document.getElementById('heroGreeting');
+    if (g && greeting) { g.textContent = greeting; g.hidden = false; }
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', showGreeting);
+  } else {
+    showGreeting();
+  }
 
   video.setAttribute('poster', s.p);
   video.setAttribute('src', s.v);
