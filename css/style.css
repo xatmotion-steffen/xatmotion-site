@@ -1422,3 +1422,7 @@ button{font-family:inherit;cursor:pointer;}
 .share-box .share-btn,.share-box .share-btn:hover{text-decoration:none;}
 .share-box .share-btn{color:var(--c-teal-dark);}
 .share-box .share-btn:hover,.share-box .share-btn:focus-visible{color:var(--c-white);}
+/* Fehlerseite */
+.err-links{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px;}
+.err-links .project-video-link{margin:0;}
+.err-card .btn,.err-card .project-video-link{text-decoration:none;}
