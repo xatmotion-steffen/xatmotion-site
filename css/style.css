@@ -1432,3 +1432,6 @@ button{font-family:inherit;cursor:pointer;}
 
 /* Lange Woerter in Textkarten (z. B. Verbraucherstreitbeilegung) duerfen umbrechen */
 .legal-card h2,.legal-card h3,.legal-card p,.legal-card li{overflow-wrap:break-word;}
+
+/* Lange Abschnittsueberschriften (z. B. "Drohnenproduktion") duerfen umbrechen */
+.section-heading{overflow-wrap:break-word;hyphens:auto;}
