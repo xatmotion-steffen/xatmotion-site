@@ -180,14 +180,17 @@ document.addEventListener('DOMContentLoaded', function () {
           if (icon) icon.className = 'fa-solid fa-link';
         }, 2000);
       }
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(url).then(done, function () {});
-      } else {
+      function legacy() {
         var ta = document.createElement('textarea');
         ta.value = url; ta.setAttribute('readonly', ''); ta.style.position = 'fixed'; ta.style.opacity = '0';
         document.body.appendChild(ta); ta.select();
         try { if (document.execCommand('copy')) done(); } catch (e) {}
         document.body.removeChild(ta);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(done, legacy);
+      } else {
+        legacy();
       }
     });
   });
